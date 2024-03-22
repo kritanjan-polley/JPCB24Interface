@@ -2,11 +2,11 @@
 
 ## pmf 
 Contains scripts to compute the free energy profiles of pulling an ozone through an air-water interface with umbralla sampling. 
-### preEq 
+#### preEq 
 Makes the initial configuration of the slab geometry and then adds drude ocillator to polarizable atoms (at 0K).
-### equilibration
+#### equilibration
 Takes the initial polarizable configuration from preEq folder, heats it up slowly and then equilibrates.
-### production
+#### production
 Takes equilibrated data files from equilibration folder and runs final production. The final production data files (lammps output format) will have name data.${location}.prod.pol
 
 ## shooting 
