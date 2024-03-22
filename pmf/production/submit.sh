@@ -1,9 +1,7 @@
 #!/bin/bash
 
 
-# for i in $(seq -25.0 1.0 25.0)
-# for i in $(seq -28.0 1.0 -14.0) $(seq 14.0 1.0 28.0)
-for i in -16.0 -25.0 16.0 24.0 4.0 9.0
+for i in $(seq -35.0 1.0 35.0)
 do
 
 if (( $(echo "$i > -40.0" | bc -l) ))
