@@ -1,8 +1,7 @@
 #!/bin/bash
 start_time="$(date -u +%s.%N)"
 
-j=0
-for i in $(seq 0 1 50)
+for i in $(seq 0 1 30)
 do 
   awk '{print $1,$8,$9}' semi.$i.txt > final.$i.txt  
 done
