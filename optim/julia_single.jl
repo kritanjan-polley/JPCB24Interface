@@ -47,7 +47,7 @@ dt = 0.45 * min(hx, hv)^2;
 x0 = gauss(xArr, 35.0, 2.0);
 v0 = one_sided_gaussian(vArr, 0.0, sig, "L");
 
-accuracy_order = 4;
+accuracy_order = 6;
 if_periodic = false;
 dx1 = 1.0 / hx * deriv1(xlen, accuracy_order, if_periodic);
 dv1 = 1.0 / hv * deriv1(vlen, accuracy_order, false);
