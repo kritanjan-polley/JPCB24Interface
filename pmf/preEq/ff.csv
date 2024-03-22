@@ -1,0 +1,26 @@
+Type,mass,drude_mass,epsilon,sigma,alpha,Molecule,Description,Reference
+ODw,16,0.8,0.21094155,3.18395,0.97825,swm4-ndp,SWM4-NDP O,https://doi.org/10.1016/j.cplett.2005.10.135
+HDw,1,,0,0,0,swm4-ndp,SWM4-NDP H,https://doi.org/10.1016/j.cplett.2005.10.135
+MDw,0.001,,0,0,0,swm4-ndp,SWM4-NDP M,https://doi.org/10.1016/j.cplett.2005.10.135
+O3c,16,0.8,0.156,3.20367,0.95,O3,O3 center,https://pubs.acs.org/doi/pdf/10.1021/jp051361%2B
+O3s,16,0.8,0.156,3.20367,0.95,O3,O3 side,https://pubs.acs.org/doi/pdf/10.1021/jp051361%2B
+polNa,23,0.8,0.1,2.2718,0.240,,polarizable Na+,https://pubs.acs.org/doi/pdf/10.1021/jp021871t
+polCl,35,0.8,0.1,4.3387,3.690,,polarizable Cl-,https://pubs.acs.org/doi/pdf/10.1021/jp021871t
+polBr,80,0.8,0.1,4.5436,4.770,,polarizable Br-,https://pubs.acs.org/doi/pdf/10.1021/jp021871t
+polI,127,0.8,0.1,5.1245,6.920,,Polarizable I-,https://pubs.acs.org/doi/pdf/10.1021/jp021871t
+CC,12,0.8,0.0576,3.1256,0.616,CO3,polarizable Carbonate C,https://doi.org/10.1016/j.jcis.2007.09.097
+OC,16,0.8,0.1554,3.5532,0.434,CO3,polarizable Carbonate O,https://doi.org/10.1016/j.jcis.2007.09.098
+Na,23,,0.124665,2.876,0,,Na+,https://pubs.acs.org/doi/10.1021/jp980642x
+Cl,35,,0.124665,3.785,0,,Cl-,https://pubs.acs.org/doi/10.1021/jp980642x
+OT4P,16,,0.16275,3.16435,0,tip4p/e,TIP4P/E O,https://doi.org/10.1063/1.1683075
+HT4P,1,,0,0,0,tip4p/e,TIP4P/E H,https://doi.org/10.1063/1.1683075
+MT4P,0.001,,0,0,0,tip4p/e,TIP4P/E M,https://doi.org/10.1063/1.1683075
+OSPC,16,,0.1553,3.166,0,spc,SPC(/E) O,https://pubs.acs.org/doi/pdf/10.1021/j100308a038
+HSPC,1,,0,0,0,spc,SPC(/E) H,https://pubs.acs.org/doi/pdf/10.1021/j100308a038
+bicarbH,1,0.8,0,0,0.135,HCO3,Bicarbonate H,https://doi.org/10.1016/j.jcis.2007.09.098
+bicarbC,12,0.8,0.0576,3.1256,0.616,HCO3,Bicarbonate C,https://doi.org/10.1016/j.jcis.2007.09.098
+bicarbOH,16,0.8,0.1554,3.5532,0.465,HCO3,Bicarbonate Hydroxyl O,https://doi.org/10.1016/j.jcis.2007.09.098
+bicarbO,16,0.8,0.1554,3.5532,0.434,HCO3,Bicarbonate O,https://doi.org/10.1016/j.jcis.2007.09.098
+OT3P,16,,0.102,3.188,0,tip3p/e,TIP3P O,https://doi.org/10.1063/1.1808117
+HT3P,1,,0,0,0,tip3p/e,TIP3P H,https://doi.org/10.1063/1.1808117
+Au,197,,0.1,3.16435,0,,Au,

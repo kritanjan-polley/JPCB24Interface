@@ -1,0 +1,14 @@
+# drude.ff, version 2015/05/07
+# units: kJ/mol, A, deg
+# kforce is in the form k/2 r_D^2
+# O3, https://pubs.acs.org/doi/pdf/10.1021/jp030592i
+
+# type  m_D/u   q_D/e    k_D   alpha/A3  thole
+# SWM4-NDP water, CPL 418(2006)245
+ODw     0.8    -1.71636  4184.0   0.97825   2.6
+O3m     0.8    -1.0      4184.0   0.950     2.6
+O3e     0.8    -1.0      4184.0   0.950     2.6
+polNa   0.8    -1.0      4184.0   0.157     2.6
+polCl   0.8    -1.0      4184.0   3.969     2.6
+polBr   0.8    -1.0      4184.0   5.262     2.6
+polI    0.8    -1.0      4184.0   7.439     2.6

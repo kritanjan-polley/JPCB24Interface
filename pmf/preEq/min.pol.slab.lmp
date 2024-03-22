@@ -1,0 +1,58 @@
+include params.lmp
+
+processors ${px} ${py} ${pz}
+# processors 2 2 1
+
+atom_style full
+pair_style soft 1.0
+bond_style harmonic
+angle_style harmonic
+improper_style harmonic
+
+read_data data.pol.${label}.${location}.min
+
+pair_modify shift yes
+
+group oxy      type 1
+group water    type 1 2 3
+group o3       type 4 5
+group omid     type 4
+group ions     type 6 7 8
+group slab     type 1 2 3 6 7 8
+group rigidmol type 1:5
+group atoms    type 1:8
+group drudes   type 9:14
+group cores    type 1 2
+
+include pair-drude_tip4p_O3_NaIBr.lmp
+
+neigh_modify every 1 delay 0 check yes
+
+# Freeze Non Drude Particles
+fix freeze atoms setforce 0 0 0
+
+thermo_style custom step pe ke density fmax fnorm
+thermo ${ThermoEvery}
+dump 1 all custom 2000 min.lammpstrj id mol type x y z vx vy vz fx fy fz 
+
+minimize 0 0 100000 100000
+
+unfix freeze
+
+minimize 0 0 100000 100000
+
+min_style quickmin
+min_modify norm max
+timestep ${dtMin}
+
+minimize 0 1 100000 100000
+
+set group atoms   vx 0.0 vy 0.0 vz 0.0
+set group drudes  vx 0.0 vy 0.0 vz 0.0
+
+reset_mol_ids all
+
+fix 1 all recenter 0.0 0.0 0.0
+run 0
+
+write_data data.${label}.${location}.min pair ij
