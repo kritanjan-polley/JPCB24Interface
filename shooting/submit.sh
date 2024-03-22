@@ -7,7 +7,6 @@
 #SBATCH --ntasks=10
 #SBATCH --qos=lr_lowprio
 #SBATCH -t 0:20:00
-#SBATCH --exclude=n0110.lr4,n0070.lr4,n0008.lr4,n0008.lr4,n0029.lr4,n0019.lr4,n0031.lr4,n0030.lr4,n0028.lr4,n0018.lr4,n0007.lr4
 #SBATCH --cpus-per-task=2
 #SBATCH --array=1-1000
 
