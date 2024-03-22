@@ -1,0 +1,79 @@
+# ==========================================================================
+# System Parameters
+# ==========================================================================
+
+units real
+dimension 3
+boundary p p p
+
+# Physical Parameters
+variable rho equal 1.0      # Density (g/cm^3)
+variable MR  equal 18.02     # Molar Mass (g/mol)
+variable NA  equal 6.022e23  # Avogadro's Constant (1/mol)
+
+# Calculate Corresponding Lattice Constant (A)
+variable a equal "(v_MR/(v_rho*v_NA))^(1/3)*1e8"
+
+# Half Box Widths (in Lattice Coordinates)
+# NB: Number of Particles = 8*Lx*Ly*Lz
+# These Numbers correspond to Approximately 25 x 25 x 25 A
+variable Lx     equal 4
+variable Ly     equal v_Lx
+variable Lzcut  equal 6
+variable Lz     equal v_Lzcut*3
+
+variable nParticle equal 8*v_Lx*v_Ly*v_Lzcut
+
+##compute number of ions
+variable molarity equal 0.25 
+variable unitVolCount equal v_molarity*6.022e-4
+variable volMid equal 8.0*v_Lx*v_Ly*v_Lzcut*v_a*v_a*v_a 
+variable nIon equal ceil(v_volMid*v_unitVolCount)
+
+# print unitVolCount=${unitVolCount}
+# print volMid=${volMid}
+# print nIon=${nIon}
+
+variable coulCut equal 12.0
+variable pppmCut equal 1.0E-5
+
+# variable myseed equal 93519
+variable S equal floor(random(0,2^16,v_myseed))
+
+variable inX string $(floor(random(-v_Lx,v_Lx,v_S)))
+variable inY string $(floor(random(-v_Ly,v_Ly,v_S)))
+variable inZ string $(floor(random(-v_Lzcut,v_Lzcut,v_S)))
+
+variable dt  equal 1.0   ## in fs
+variable TK  equal 300.0 ## in K
+variable TDK equal 1.0   ## in K
+
+variable dtMin equal 1.0E-3
+
+variable gamma     equal 100
+variable gammat    equal v_gamma*v_dt
+variable gammaD    equal 20
+variable gammaDt   equal v_gammaD*v_dt
+ 
+variable nStep equal 20000     # Simulation Duration, heating to T K (in Timesteps)
+variable nHeat equal 4E5     # equilibration at T K 
+variable nEq   equal 1E6
+variable nRun  equal round(8E6/v_dt)
+
+# Output Parametersc
+variable ThermoEvery equal round(100/v_dt)
+variable atomEvery   equal 4000
+variable cvevery     equal 500
+variable nchain      equal 50
+
+variable kh2o equal 900
+variable ko3  equal 4    ## kcal/mol
+
+# Simulation Labels
+variable label string slabPlumed
+# variable datadir string /global/home/users/kpolley/diffusion/data
+variable preEqDir string ../preEq
+variable eqDir string ../equilibration
+variable prodDir string ../production
+
+timestep ${dt}

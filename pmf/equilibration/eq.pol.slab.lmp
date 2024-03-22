@@ -1,0 +1,93 @@
+include params.lmp
+
+processors ${px} ${py} ${pz}
+# processors 2 2 1
+
+pair_style lj/cut/thole/long 2.6 ${coulCut}
+atom_style full
+bond_style harmonic
+angle_style harmonic
+improper_style harmonic
+kspace_style pppm ${pppmCut}
+neighbor 2.0 bin   # Includes atoms r <= lj_cut + 2.0 in neighborlist
+
+read_data ${preEqDir}/data.${label}.${location}.min
+include ${preEqDir}/pair-drude_tip4p_O3_NaIBr.lmp
+pair_modify shift yes
+
+group oxy       type 1
+group water     type 1 2 3
+group o3        type 4 5
+group slab      type 1 2 3 6 7 8
+group ions      type 6 7 8
+group rigidmol  type 1:5
+group rigidO3   type 4 5
+group ridgidH2O type 1 2 3
+group drudes    type 9:14
+group atoms     type 1:8
+group allbutO3  type 1 2 3 6 7 9 10 11 12
+
+neigh_modify every 1 delay 0 check yes
+
+timestep 0.5
+delete_bonds atoms multi
+
+
+if "${location} == -10.0 || ${location} == -9.0 || ${location} == 4.0 || ${location} == 14.0" then &
+   "dump at atoms custom ${atomEvery} eq.${location}.lammpstrj id mol type x y z vx vy vz fx fy fz"
+# dump at all custom ${atomEvery} eq.${location}.lammpstrj id mol type x y z vx vy vz fx fy fz
+
+comm_modify vel yes
+compute slabCOM slab com
+compute o3COM o3 com
+compute TDRUDE all temp/drude
+# compute water_chunk water chunk/atom bin/1d z center 0.1
+
+variable THeat equal ramp(1,v_TK)
+
+
+thermo_style custom time econserve etotal ke pe fmax c_TDRUDE[1] c_TDRUDE[2] temp v_THeat c_slabCOM[3] c_o3COM[3]
+thermo ${ThermoEvery}
+
+fix slabSpring ridgidH2O spring tether ${kh2o} NULL NULL 0.0 0.0
+fix o3Spring rigidO3 spring tether ${ko3} NULL NULL ${location} 0.0
+
+fix DTDIR all drude/transform/direct
+fix langATOMS atoms langevin 1 ${TK} ${gammat} $S
+fix langDRUDES drudes langevin 1 ${TDK} ${gammaDt} $S
+fix nveATOMS rigidmol rigid/nve/small molecule langevin 1 ${TK} ${gammat} $S
+fix nveIONS ions nve 
+fix nveDRUDES drudes nve
+fix DTINV all drude/transform/inverse
+fix MOMENTUM all momentum 100 linear 1 1 1
+
+run ${nHeat}
+
+unfix slabSpring
+unfix o3Spring
+unfix DTDIR
+unfix langATOMS
+unfix langDRUDES
+unfix nveATOMS
+unfix nveIONS
+unfix nveDRUDES
+unfix DTINV
+unfix MOMENTUM
+# reset_timestep 0
+
+timestep ${dt}
+variable THeat equal v_TK
+
+fix slabSpring slab spring tether ${kh2o} NULL NULL 0.0 0.0
+fix o3Spring o3 spring tether ${ko3} NULL NULL ${location} 0.0
+
+fix langALL all langevin/drude ${TK} ${gammat} $S ${TDK} ${gammaDt} $S
+fix nveRIGIDh2o rigidmol rigid/nve/small molecule langevin ${TK} ${TK} ${gammat} $S
+fix nveIONS ions nve
+fix nveDRUDES drudes nve
+
+# fix rho_T water ave/chunk 1 ${nEq} ${nEq} water_chunk density/mass file rho.${location}.out
+
+run ${nEq}
+
+write_data data.${location}.eq.pol pair ij

@@ -1,0 +1,101 @@
+include params.lmp
+
+processors ${px} ${py} ${pz}
+# processors 2 2 1
+
+pair_style lj/cut/thole/long 2.6 ${coulCut}
+atom_style full
+bond_style harmonic
+angle_style harmonic
+improper_style harmonic
+kspace_style pppm ${pppmCut}
+neighbor 2.0 bin   # Includes atoms r <= lj_cut + 2.0 in neighborlist
+
+# molecule h2o tip4p.mol
+# molecule o3  ozone.mol
+
+# read_data ${eqDir}/data.${location}.eq.pol
+read_data data.${location}.prod.pol
+include ${preEqDir}/pair-drude_tip4p_O3_NaIBr.lmp
+pair_modify shift yes
+
+group oxy       type 1
+group water     type 1 2 3
+group o3        type 4 5
+group slab      type 1 2 3 6 7 8
+group ions      type 6 7 8
+group rigidmol  type 1:5
+group rigidO3   type 4 5
+group ridgidH2O type 1 2 3
+group drudes    type 9:14
+group atoms     type 1:8
+
+group NaPlus    type 6
+group IMinus    type 7
+group ClMinus   type 8
+
+neigh_modify every 1 delay 0 check yes
+
+
+timestep ${dt}
+delete_bonds atoms multi
+
+# if "${location} == -10.0 || ${location} == -9.0 || ${location} == 4.0 || ${location} == 14.0" then &
+#    "dump at all custom ${atomEvery} prod.${location}.lammpstrj id mol type x y z vx vy vz fx fy fz"
+# dump at all custom ${atomEvery} prod.${location}.lammpstrj id mol type x y z vx vy vz fx fy fz
+
+comm_modify vel yes
+compute slabCOM slab com
+compute o3COM o3 com
+compute TDRUDE all temp/drude
+# compute TATOM atoms temp/com
+
+## compute density profile
+# compute water_chunk water chunk/atom bin/1d z center 0.1
+# compute Na_chunk NaPlus chunk/atom bin/1d z center 0.1
+# compute I_chunk IMinus chunk/atom bin/1d z center 0.1
+# compute Cl_chunk ClMinus chunk/atom bin/1d z center 0.1
+
+## compute dipole
+# compute cc1 all chunk/atom bin/1d z center 0.1
+# compute myChunk all dipole/chunk cc1
+
+## compute rdf
+# compute naRDF all rdf 800 6 1
+# compute clRDF all rdf 800 8 1
+# compute iRDF all rdf 800 7 1
+compute naclRDF all rdf 800 6 8
+compute naiRDF all rdf 800 6 7
+
+thermo_style custom step etotal ke pe c_TDRUDE[1] c_TDRUDE[2] temp c_slabCOM[3] c_o3COM[3]
+thermo ${ThermoEvery}
+
+
+## propagation
+fix slabSpring slab spring tether ${kh2o} NULL NULL 0.0 0.0
+fix o3Spring o3 spring tether ${ko3} NULL NULL ${location} 0.0
+
+fix langATOMS all langevin/drude ${TK} ${gammat} $S ${TDK} ${gammaDt} $S
+fix nveRIGIDh2o rigidmol  rigid/nve/small molecule langevin ${TK} ${TK} ${gammat} $S
+fix nveIONS ions nve
+fix nveDRUDES drudes nve
+
+## density profiles
+# fix rho_T water ave/chunk 1 ${nRun} ${nRun} water_chunk density/mass file rho.${location}.out
+# fix rho_Na NaPlus ave/chunk 1 ${nRun} ${nRun} Na_chunk density/mass file sodium.density.${location}.out
+# fix rho_I IMinus ave/chunk 1 ${nRun} ${nRun} I_chunk density/mass file iodide.density.${location}.out
+# fix rho_Cl ClMinus ave/chunk 1 ${nRun} ${nRun} Cl_chunk density/mass file bromide.density.${location}.out
+
+## average dipole moment
+# fix check_dipole all ave/time 1 ${nRun} ${nRun} c_myChunk[*] file all.dipole.${location}.out mode vector
+
+## rdf
+# fix rdf_na all ave/time 1 ${nRun} ${nRun} c_naRDF[*] file rdf.na.${location}.out mode vector
+# fix rdf_i all ave/time 1 ${nRun} ${nRun} c_iRDF[*] file rdf.i.${location}.out mode vector
+# fix rdf_cl all ave/time 1 ${nRun} ${nRun} c_clRDF[*] file rdf.cl.${location}.out mode vector
+fix rdf_nacl all ave/time 1 ${nRun} ${nRun} c_naclRDF[*] file rdf.nacl.${location}.out mode vector
+fix rdf_nai all ave/time 1 ${nRun} ${nRun} c_naiRDF[*] file rdf.nabr.${location}.out mode vector
+
+run ${nRun}
+
+write_data data.${location}.prod.pol pair ij
