@@ -1,7 +1,7 @@
 # JPCB24a
 
 ## pmf 
-Contains scripts to compute the free energy profiles of pulling an ozone through an air-water interface with umbralla sampling. 
+Contains scripts to compute the free energy profiles of pulling an ozone through an air-water interface with umbralla sampling run in LAMMPS. 
 #### preEq 
 Makes the initial configuration of the slab geometry and then adds drude ocillator to polarizable atoms (at 0K).
 #### equilibration
