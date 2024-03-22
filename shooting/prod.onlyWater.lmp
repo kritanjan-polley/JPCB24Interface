@@ -1,0 +1,119 @@
+include params.lmp
+
+print """
+The random seed is ${myseed}
+The data file is for location ${loc}
+The processor partition is ${px}, ${py}, ${pz}
+The propagation length is ${tps} picosecond
+"""
+
+processors ${px} ${py} ${pz}
+
+# ==========================================================================
+# Simulation Set Up
+# ==========================================================================
+
+pair_style lj/cut/thole/long 2.6 ${coulCut}
+atom_style full
+bond_style harmonic
+angle_style harmonic
+improper_style harmonic
+kspace_style pppm ${pppmCut}
+neighbor 2.0 bin   # Includes atoms r <= lj_cut + 2.0 in neighborlist
+
+# Read Input Data (from min.swm4-ndp-slab.lmp)
+read_data data.${loc}.prod.pol
+include pair-drude_tip4p_O3_NaICl.lmp
+pair_modify shift yes
+
+group oxy       type 1
+group water     type 1 2 3
+group o3        type 4 5
+group slab      type 1 2 3 6 7 8
+group ions      type 6 7 8
+group rigidmol  type 1:5
+group rigidO3   type 4 5
+group ridgidH2O type 1 2 3
+group drudes    type 9:14
+group atoms     type 1:8
+
+group allbutO3  type 1 2 3 6 7 8 9 12 13 14
+group o3pol     type 4 5 10 11
+
+############
+### pre run
+
+variable o3x string $(random(-v_boxX,v_boxX,v_S))
+variable o3y string $(random(-v_boxY,v_boxY,v_S))
+variable o3z string $(normal(35.0,2.0,v_S))
+
+variable dxmove equal v_o3x-xcm(o3pol,x)
+variable dymove equal v_o3y-xcm(o3pol,y)
+variable dzmove equal v_o3z-xcm(o3pol,z)
+
+displace_atoms o3pol move ${dxmove} ${dymove} ${dzmove} units box
+comm_modify vel yes
+
+fix slabSpring water spring tether ${kh2o} NULL NULL 0.0 0.0
+fix o3Spring o3 spring tether ${ko3} NULL NULL 35.0 0.0
+
+fix langATOMS all langevin/drude ${TK} ${gammat} $S ${TDK} ${gammaDt} $S
+fix nveRIGIDmol rigidmol rigid/nve/small molecule langevin ${TK} ${TK} ${gammat} $S
+fix ionNVE ions nve
+fix nveDRUDES drudes nve
+
+run 2000
+
+unfix slabSpring
+unfix o3Spring
+unfix langATOMS
+unfix nveRIGIDmol
+unfix ionNVE
+unfix nveDRUDES
+
+### end of pre run
+##################
+
+reset_timestep 0 time 0.0
+
+variable o3x string $(random(-v_boxX,v_boxX,v_S))
+variable o3y string $(random(-v_boxY,v_boxY,v_S))
+variable o3z string $(normal(35.0,2.0,v_S))
+
+variable dxmove equal v_o3x-xcm(o3pol,x)
+variable dymove equal v_o3y-xcm(o3pol,y)
+variable dzmove equal v_o3z-xcm(o3pol,z)
+
+variable o3zvel equal vcm(o3pol,z)
+displace_atoms o3pol move ${dxmove} ${dymove} ${dzmove} units box
+
+# set group o3pol vx 0.0 vy 0.0 vz 0.0
+set group o3pol vz ${velZ}
+run 0
+
+# ==========================================================================
+# Output Computes
+# ==========================================================================
+comm_modify vel yes
+compute slabCOM slab com
+compute o3COM o3 com
+
+variable nRun equal round(v_tps*1000/v_dt)
+variable vz equal vcm(o3,z)
+
+# Thermodynamic Output
+thermo_style custom time econserve etotal ke pe temp c_slabCOM[3] c_o3COM[3] v_vz
+thermo ${ThermoEvery}
+
+# dump at atoms custom ${atomEvery} prod.${task}.lammpstrj id mol type x y z vx vy vz fx fy fz
+
+fix slabSpring water spring tether ${kh2o} NULL NULL 0.0 0.0
+
+fix langATOMS allbutO3 langevin/drude ${TK} ${gammat} $S ${TDK} ${gammaDt} $S
+fix nveRIGIDh2o water rigid/nve/small molecule langevin ${TK} ${TK} ${gammat} $S
+fix nveRIGIDo3 o3 rigid/nve/small molecule
+fix nveIONS ions nve
+fix nveDRUDES drudes nve
+
+run ${nRun}
+# write_data data.onlyWater.prod  pair ij
