@@ -143,7 +143,7 @@ function optimize_loss(param_1::Float64, param_2::Float64, param_3::Float64)
         k4 = dpdt_1 * (p1 + k3 * dtt)
         @. global p2 = p1 + 1.0 / 6 * (k1 + k2 + k2 + k3 + k3 + k4) * dtt
         if i in save_times
-            p0_dense = reshape(SparseArrays._SpecialArrays(p2), (vlen, xlen))
+            p0_dense = reshape(Array(p2), (vlen, xlen))
             x0_int = vec(sum(p0_dense, dims=1)) * hv
             v0_int = vec(sum(p0_dense, dims=2)) * hx
 
