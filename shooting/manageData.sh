@@ -11,7 +11,7 @@ if test -f "$files"; then
    echo "file already exist for "$i""
 else
    touch semi.${i}.txt
-   echo 'Time Econserve TotEng KinEng PotEng Temp c_slabCOM[3] c_o3COM[3]' >> semi.${i}.txt
+   echo 'time econserve etotal ke pe temp c_slabCOM[3] c_o3COM[3] v_vz' >> semi.${i}.txt
 fi
 done
 
