@@ -47,11 +47,11 @@ dt = 0.45 * min(hx, hv)^2;
 x0 = gauss(xArr, 35.0, 2.0);
 v0 = one_sided_gaussian(vArr, 0.0, sig, "L");
 
-accuracy_order = 6;
+accuracy_order = 4;
 if_periodic = false;
-dx1 = 1.0 / hx * deriv1(xlen, accuracy_order, if_periodic);
-dv1 = 1.0 / hv * deriv1(vlen, accuracy_order, false);
-dv2 = 1.0 / hv / hv * deriv2(vlen, accuracy_order, false);
+dx1 = 1.0 / hx * deriv1(xlen, accuracy_order, "periodic",  "periodic");
+dv1 = 1.0 / hv * deriv1(vlen, accuracy_order);
+dv2 = 1.0 / hv / hv * deriv2(vlen, accuracy_order);
 
 p0 = sparse(mychop(kron(x0, v0)));
 pot_deriv = sparse(movmean(fit_force.(xArr), 10));
