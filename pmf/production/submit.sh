@@ -4,7 +4,7 @@
 for i in $(seq -35.0 1.0 35.0)
 do
 
-if (( $(echo "$i > -40.0" | bc -l) ))
+if (( $(echo "$i > -20.0" | bc -l) ))
 then
 myPart=lr5
 numNodes=14
