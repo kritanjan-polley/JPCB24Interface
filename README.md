@@ -1,4 +1,4 @@
-# JPCB24a
+# JPCB24 : On the Statistical Mechanics of Mass Accommodation at Liquid-Vapor Interfaces
 
 ## pmf 
 Contains scripts to compute the free energy profiles of pulling an ozone through an air-water interface with umbralla sampling run in LAMMPS. 
