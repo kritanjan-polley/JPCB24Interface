@@ -3,14 +3,8 @@ using LinearAlgebra
 using Random, Distributions
 const eps = 1e-9
 
-function find_nearest(array, value)
-    idx = argmin(abs.(array-value))
-    return idx
-end;
-
-function eye(n, k)
-    return diagm(k=>ones(n-abs(k)))
-end;
+find_nearest(array :: AbstractArray, values :: Float64) = argmin(abs.(array .- value))
+eye(n::Int64, k :: Int64) = diagm(k=>ones(n-abs(k)))
 
 deriv_accuracy = 2; x_periodicity = true; v_periodicity = true;
 

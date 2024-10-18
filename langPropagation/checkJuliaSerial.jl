@@ -6,18 +6,19 @@ using BSplineKit, NaNStatistics, QuadGK
 include("functions.jl");
 
 
-const mass = 3.0*16.0*1e-3;
-const dvalue_liquid = 1.85e-1; const dvalue_gas = 1.4e3; ##
-const factor = 4.814e-1;
+const mass :: Float64 = 3.0*16.0*1e-3;
+const dvalue_liquid :: Float64 = 1.85e-1; 
+const dvalue_gas :: Float64 = 1.4e3; ##
+const factor :: Float64 = 4.814e-1;
 
-const rt = 300.0*8.314; ## J/mol
-const kBT = 0.5962; ## kcal/mol
-const gamma_liquid = kBT/mass/dvalue_liquid*factor; ## 1/ps
-const gamma_gas = kBT/mass/dvalue_gas*factor; ## 1/ps 
-const kBTm = rt/mass*1e-4; ## A^2/ps^2
-const sigma = sqrt(kBTm);## A/ps
+const rt :: Float64 = 300.0*8.314; ## J/mol
+const kBT :: Float64 = 0.5962; ## kcal/mol
+const gamma_liquid :: Float64 = kBT/mass/dvalue_liquid*factor; ## 1/ps
+const gamma_gas :: Float64 = kBT/mass/dvalue_gas*factor; ## 1/ps 
+const kBTm :: Float64 = rt/mass*1e-4; ## A^2/ps^2
+const sigma :: Float64 = sqrt(kBTm);## A/ps
 
-potential_data = readdlm("freefile.txt", comments=true);
+potential_data :: Matrix{Float64} = readdlm("freefile.txt", comments=true);
 friction_optimization = readdlm("optimization_new.txt", comments=true);
 friction_optimization = friction_optimization[sortperm(friction_optimization[:,1]),:];
 
