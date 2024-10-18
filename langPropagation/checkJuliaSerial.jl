@@ -19,7 +19,7 @@ const kBTm :: Float64 = rt/mass*1e-4; ## A^2/ps^2
 const sigma :: Float64 = sqrt(kBTm);## A/ps
 
 potential_data :: Matrix{Float64} = readdlm("freefile.txt", comments=true);
-friction_optimization = readdlm("optimization_new.txt", comments=true);
+friction_optimization :: Matrix{Float64} = readdlm("optimization_new.txt", comments=true);
 friction_optimization = friction_optimization[sortperm(friction_optimization[:,1]),:];
 
 potential_data_x = potential_data[:,1];
