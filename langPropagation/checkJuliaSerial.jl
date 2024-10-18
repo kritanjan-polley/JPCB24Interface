@@ -22,13 +22,13 @@ potential_data :: Matrix{Float64} = readdlm("freefile.txt", comments=true);
 friction_optimization :: Matrix{Float64} = readdlm("optimization_new.txt", comments=true);
 friction_optimization = friction_optimization[sortperm(friction_optimization[:,1]),:];
 
-potential_data_x = potential_data[:,1];
-potential_data_y = potential_data[:,2]*factor;
+potential_data_x :: Vector{Float64} = potential_data[:,1];
+potential_data_y :: Vector{Float64} = potential_data[:,2]*factor;
 
-width_x, shift_x, power = friction_optimization[2,2:end];
-const high_x = gamma_liquid;
-const cutoff_left = 15.0; const cutoff_right = 27.5;
-const boxlen = 55.882675
+width_x :: Float64, shift_x :: Float64, power :: Float64 = friction_optimization[2,2:end];
+const high_x :: Float64 = gamma_liquid;
+const cutoff_left :: Float64 = 15.0; const cutoff_right :: Float64 = 27.5;
+const boxlen :: Float64 = 55.882675
 
 println("width_x is : ", width_x, " shift_x is : ", shift_x, " high_x is : ",high_x, " tanh power is : ", power)
 println("Gamma liquid phase is : ", gamma_liquid, " (1/ps)")
